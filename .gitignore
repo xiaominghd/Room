@@ -24,3 +24,7 @@ demo.zip
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 截图调试用的浏览器临时目录
+_tmpprofile/
+_shot*.png
