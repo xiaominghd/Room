@@ -1,4 +1,4 @@
-/* 房间 · 网页 demo
+﻿/* 房间 · 网页 demo
    配色取自 room-app-wireframe.kui.fig 的画板渲染：
    米白底 #FBF8F3 / 暖黑 #2E2921 / 铁锈 #B0522F / 米色描边 #E6DED1 */
 
@@ -15,7 +15,7 @@
   --line2: #F0EAE0;
   --rust: #B0522F;
   --rust-soft: #F4E4DB;
-  --dark: #191510;
+  --dark: #2E2921;
   --r: 18px;
   --shadow: 0 10px 30px rgba(46, 41, 33, .10);
   --font: "Inter", -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -381,24 +381,24 @@ input.input::placeholder { color: var(--ink3); }
 
 .half-layer {
   position: absolute; inset: 0; z-index: 20;
-  background: rgba(21,17,13,.52);
+  background: rgba(46,41,33,.55);
   display: none; align-items: flex-end;
 }
 .half-sheet {
   width: 100%;
-  background: #211B15;
+  background: #2E2921;
   border-radius: 22px 22px 0 0;
   padding: 22px 20px 30px;
-  color: #F3EBDF;
+  color: #FBF8F3;
 }
 .half-line {
-  background: rgba(243,235,223,.10);
-  border: 1px solid rgba(243,235,223,.16);
+  background: rgba(251,248,243,.10);
+  border: 1px solid rgba(251,248,243,.16);
   border-radius: 14px; padding: 14px 16px; font-size: 15px;
 }
 .half-btns { display: flex; gap: 10px; margin-top: 14px; }
-.half-btns .btn { margin: 0; height: 46px; background: transparent; border-color: rgba(243,235,223,.22); color: #F3EBDF; }
-.half-btns .btn.dark { background: #F3EBDF; color: #211B15; border-color: #F3EBDF; }
+.half-btns .btn { margin: 0; height: 46px; background: transparent; border-color: rgba(251,248,243,.22); color: #FBF8F3; }
+.half-btns .btn.dark { background: #FBF8F3; color: #2E2921; border-color: #FBF8F3; }
 
 .closed-layer {
   position: absolute; inset: 0; z-index: 10;
@@ -406,10 +406,10 @@ input.input::placeholder { color: var(--ink3); }
   display: none; flex-direction: column; align-items: center; justify-content: center;
   gap: 14px; padding: 0 40px 130px;
 }
-.closed-quote { font-size: 15px; line-height: 1.7; color: #E9DFCF; text-align: center; }
+.closed-quote { font-size: 15px; line-height: 1.7; color: rgba(251,248,243,.94); text-align: center; }
 .door-card-line {
-  font-size: 12px; color: rgba(233,223,207,.55);
-  border: 1px dashed rgba(233,223,207,.28);
+  font-size: 12px; color: rgba(251,248,243,.55);
+  border: 1px dashed rgba(251,248,243,.28);
   border-radius: 999px; padding: 7px 14px;
 }
 
@@ -527,7 +527,7 @@ input.input::placeholder { color: var(--ink3); }
 /* ---------- 弹层 ---------- */
 .scrim {
   position: absolute; inset: 0;
-  background: rgba(21,17,13,.42);
+  background: rgba(46,41,33,.42);
   opacity: 0; pointer-events: none; transition: opacity .16s ease;
   z-index: 40;
 }
@@ -565,7 +565,7 @@ input.input::placeholder { color: var(--ink3); }
 /* ---------- 房间状态切换 ---------- */
 .room .statusbar { position: relative; z-index: 15; }
 .room[data-state="closed"] .statusbar,
-.room[data-state="door-card"] .statusbar { --sbbar: #E9DFCF; }
+.room[data-state="door-card"] .statusbar { --sbbar: rgba(251,248,243,.92); }
 
 .room[data-state="theirs-closed"] .strip { display: block; }
 .room[data-state="half"] .half-layer { display: flex; }
@@ -595,7 +595,7 @@ input.input::placeholder { color: var(--ink3); }
 /* ---------- 交互态补充 ---------- */
 .dim {
   position: absolute; inset: 0; z-index: 5;
-  background: #15110D; opacity: 0; pointer-events: none;
+  background: #2E2921; opacity: 0; pointer-events: none;
   transition: opacity .12s linear;
 }
 .room[data-state=half] .dim { opacity: .5; }
@@ -670,7 +670,7 @@ input.input::placeholder { color: var(--ink3); }
 }
 .hidden-empty { text-align: center; color: var(--ink3); font-size: 12px; padding: 26px 0; }
 .door-card-line { cursor: pointer; }
-.door-card-line:hover { color: rgba(233,223,207,.85); border-color: rgba(233,223,207,.5); }
+.door-card-line:hover { color: rgba(251,248,243,.85); border-color: rgba(251,248,243,.5); }
 
 /* 相册里留过的格子多一个小标记 */
 .grid .cell.kept::after {
