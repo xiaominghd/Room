@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8" />
@@ -93,8 +93,8 @@
           <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
           <div class="pad">
             <h2 class="title">登录</h2>
-            <div class="field"><span class="ph">手机号</span></div>
-            <div class="field"><span class="ph">密码</span></div>
+            <input class="field" placeholder="手机号" />
+            <input class="field" placeholder="密码" />
             <button class="btn primary" data-act="login">登录</button>
             <div class="links"><button class="link" data-goto="register">没有账号，注册</button><button class="link" data-goto="forgot-password">忘记密码</button></div>
             <p class="note">一台设备登录；新登录会让旧设备退出</p>
@@ -107,10 +107,10 @@
           <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
           <div class="pad">
             <h2 class="title">注册</h2>
-            <div class="field"><span class="ph">手机号</span></div>
-            <div class="field"><span class="ph">用户名</span></div>
-            <div class="field"><span class="ph">密码（至少 8 位）</span></div>
-            <div class="field"><span class="ph">再次输入密码</span></div>
+            <input class="field" placeholder="手机号" />
+            <input class="field" placeholder="用户名" />
+            <input class="field" placeholder="密码（至少 8 位）" />
+            <input class="field" placeholder="再次输入密码" />
             <label class="agree"><i class="cb"></i><span>我已阅读并同意 <b>用户协议</b> 和 <b>隐私政策</b></span></label>
             <button class="btn primary" data-act="register">注册</button>
             <p class="center"><button class="link" data-goto="login">已有账号，去登录</button></p>
@@ -126,7 +126,7 @@
             <p class="sub2">阿澄 给你留的房间</p>
             <div class="code-row"><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell on"></i><i class="cell"></i><i class="cell"></i></div>
             <button class="btn primary" data-act="enter-room">进入</button>
-            <p class="center"><button class="link">码没带过来？重新打开链接</button></p>
+            <p class="center"><button class="link" data-act="reopen-link">码没带过来？重新打开链接</button></p>
           </div>
           <div class="homebar"></div>
         </section>
@@ -138,8 +138,8 @@
             <div class="logo"><svg class="ic"><use href="#i-door"/></svg></div>
             <h2 class="h5-title">有人给你留了一个房间</h2>
             <p class="sub2">这个房间只住两个人</p>
-            <button class="btn primary wide">去下载</button>
-            <button class="btn ghost wide">已装，打开</button>
+            <button class="btn primary wide" data-act="download">去下载</button>
+            <button class="btn ghost wide" data-act="open-app">已装，打开</button>
             <p class="note center">一间房只有两个位置</p>
           </div>
           <div class="homebar"></div>
@@ -179,9 +179,9 @@
           <div class="composer composer-main" data-when="open">
             <div class="handle" data-act="half" title="上拉关门"></div>
             <div class="composer-row">
-              <button class="icon-btn sm"><svg class="ic"><use href="#i-image"/></svg></button>
+              <button class="icon-btn sm" data-act="image" aria-label="发图片"><svg class="ic"><use href="#i-image"/></svg></button>
               <input class="input" id="roomInput" placeholder="说点什么" autocomplete="off" />
-              <button class="icon-btn sm"><svg class="ic"><use href="#i-mic"/></svg></button>
+              <button class="icon-btn sm" data-act="record" aria-label="语音"><svg class="ic"><use href="#i-mic"/></svg></button>
               <button class="send" data-act="send"><svg class="ic"><use href="#i-send"/></svg></button>
             </div>
           </div>
@@ -221,9 +221,11 @@
             <h1 class="page-title">相册</h1>
             <span class="icon-btn ghostd"></span>
           </header>
+          <div class="album-body">
           <div class="album-head"><button class="month-nav" data-act="prev-month">‹</button><div class="month">2025 年 10 月</div><button class="month-nav" data-act="next-month">›</button></div>
           <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
           <div class="grid" id="grid"></div>
+          </div>
           <button class="row-link" data-goto="album-hidden">隐藏的一天</button>
           <div class="homebar"></div>
         </section>
@@ -382,10 +384,10 @@
             <span class="icon-btn ghostd"></span>
           </header>
           <div class="pad">
-            <div class="field"><span class="ph">当前密码</span></div>
-            <div class="field"><span class="ph">新密码（至少 8 位）</span></div>
+            <input class="field" placeholder="当前密码" />
+            <input class="field" placeholder="新密码（至少 8 位）" />
             <p class="note">改完其他设备会掉线，这台保持</p>
-            <button class="btn primary">提交</button>
+            <button class="btn primary" data-act="submit">提交</button>
             <p class="center"><button class="link" data-goto="forgot-password">忘记当前密码</button></p>
           </div>
           <div class="homebar"></div>
@@ -399,12 +401,12 @@
             <span class="icon-btn ghostd"></span>
           </header>
           <div class="pad">
-            <div class="field"><span class="ph">新手机号</span></div>
-            <div class="field"><span class="ph">再次输入新手机号</span></div>
-            <div class="field"><span class="ph">密码</span></div>
+            <input class="field" placeholder="新手机号" />
+            <input class="field" placeholder="再次输入新手机号" />
+            <input class="field" placeholder="密码" />
             <p class="note">没有短信验证，无法验证新号归属</p>
             <p class="note">换号后，旧号可以再注册</p>
-            <button class="btn primary">提交</button>
+            <button class="btn primary" data-act="submit">提交</button>
           </div>
           <div class="homebar"></div>
         </section>
@@ -422,9 +424,9 @@
               <div class="step"><i>2</i><span>共同相册会变成只读，留给你对方</span></div>
               <div class="step"><i>3</i><span>期间登录即撤销</span></div>
             </div>
-            <div class="field"><span class="ph">密码</span></div>
-            <div class="field"><span class="ph">输入「注销」确认</span></div>
-            <button class="btn rust">注销</button>
+            <input class="field" placeholder="密码" />
+            <input class="field" placeholder="输入「注销」确认" />
+            <button class="btn rust" data-act="delete-account">注销</button>
           </div>
           <div class="homebar"></div>
         </section>
@@ -460,10 +462,10 @@
           </header>
           <div class="pad">
             <div class="group-label">范围</div>
-            <div class="chips"><i class="chip on">全部</i><i class="chip">近 30 天</i><i class="chip">近 7 天</i></div>
+            <div class="chips"><i class="chip on" data-act="range" data-v="all">全部</i><i class="chip" data-act="range" data-v="30">近 30 天</i><i class="chip" data-act="range" data-v="7">近 7 天</i></div>
             <div class="card-list">
-              <div class="row col"><div><b>PDF 纪念册</b><span>排成一本册子，适合存下来慢慢看</span></div><i class="radio on"></i></div>
-              <div class="row col"><div><b>纯文本</b><span>只有文字内容，文件最小</span></div><i class="radio"></i></div>
+              <div class="row col" data-act="format" data-v="pdf"><div><b>PDF 纪念册</b><span>排成一本册子，适合存下来慢慢看</span></div><i class="radio on"></i></div>
+              <div class="row col" data-act="format" data-v="text"><div><b>纯文本</b><span>只有文字内容，文件最小</span></div><i class="radio"></i></div>
             </div>
             <p class="note">导出时，对方会收到一条提示</p>
             <p class="note ok" id="exportDone" hidden>已生成，对方已收到提示</p>

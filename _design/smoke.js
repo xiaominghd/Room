@@ -253,5 +253,78 @@ tap('mark-del', { id: 'mk1' });
 check('删掉自己标的之后卡里不再显示', !day.innerHTML.includes('周末去试试新开的店'));
 check('删掉自己标的之后对方那条还在', day.innerHTML.includes('晚安，做个好梦'));
 
+// 本轮补的死按钮与缺口
+api.S.openDay = '2025-10-16'; api.renderDay();
+api.renderRoom();
+
+// 发图片
+api.S.door = 'open'; api.S.justOpened = false;
+api.renderRoom();
+const imgCount = api.S.messages.filter((m) => m.kind === 'image').length;
+tap('image');
+check('点图片按钮真的发了一张图', api.S.messages.filter((m) => m.kind === 'image').length === imgCount + 1);
+check('图片气泡出现在消息流', feed.innerHTML.includes('img-msg'));
+
+// 录音
+tap('record');
+check('点麦克风进入录音态', api.S.demo.recording === true);
+check('录音态有提示', feed.innerHTML.includes('松手发送'));
+tap('record');
+check('再点一次退出录音态', api.S.demo.recording === false);
+
+// 导出范围 / 格式
+api.show('export');
+tap('range', { v: '7' });
+check('范围能选近 7 天', api.S.exportPrefs.range === '7');
+tap('format', { v: 'text' });
+check('格式能选纯文本', api.S.exportPrefs.format === 'text');
+
+// 此刻：本人能改能删
+api.show('day-card'); api.S.openDay = '2025-10-16'; api.renderDay();
+check('自己的此刻有「改」「删」', day.innerHTML.includes('moment-del') && day.innerHTML.includes('moment-add'));
+const myMomentBefore = api.S.days['2025-10-16'].moments.me;
+tap('moment-del');
+check('删掉此刻', api.S.days['2025-10-16'].moments.me === '');
+check('删后不显示那句', !day.innerHTML.includes(myMomentBefore));
+check('删后出现「写一句」入口', day.innerHTML.includes('写一句'));
+
+// H5 与邀请链接
+api.show('invite-h5');
+tap('open-app');
+check('H5「已装，打开」跳到开房码页', api.S.route === 'invite');
+tap('reopen-link');
+check('重新打开链接不会崩', true);
+
+// 逐页跳转：25 个页面每个都能显示，且只显示它一个
+let pageFails = [];
+for (const p of PAGES) {
+  try {
+    api.show(p);
+    const on = onPages();
+    if (on.length !== 1 || on[0] !== p) pageFails.push(`${p} -> ${on.join(',')}`);
+  } catch (e) {
+    pageFails.push(`${p} 抛错 ${e.message}`);
+  }
+}
+check('25 个页面逐一显示且只有一个在屏', pageFails.length === 0);
+if (pageFails.length) console.log('     ', pageFails);
+
+// 每个二级页返回都不崩，且落回上一页
+const stackFails = [];
+for (const p of PAGES) {
+  if (['launch', 'login', 'invite-h5'].includes(p)) continue;
+  try {
+    api.show(p);
+    api.S.stack = ['room', p];
+    handlers.click({ target: { dataset: {}, closest: (sel) => (sel === '[data-back]' ? {} : null) }, preventDefault() {} });
+    const on = onPages();
+    if (on.length !== 1) stackFails.push(`${p} -> ${on.join(',')}`);
+  } catch (e) {
+    stackFails.push(`${p} 抛错 ${e.message}`);
+  }
+}
+check('每个页面的返回都落回一个页面', stackFails.length === 0);
+if (stackFails.length) console.log('     ', stackFails);
+
 console.log(fails ? `\n${fails} 项失败` : '\n全部通过');
 process.exit(fails ? 1 : 0);

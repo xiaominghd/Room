@@ -1,4 +1,4 @@
-/* 房间 · 网页 demo
+﻿/* 房间 · 网页 demo
    按 PRD 把交互串起来：导航栈、门、消息、28 天记忆、相册、此刻、留一天、设置。
    所有状态都在内存里，刷新即重置。 */
 
@@ -41,6 +41,7 @@ const S = {
   quote: null,
   actionMsg: null,
   notify: { msg: true, lock: false, tonight: false },
+  exportPrefs: { range: 'all', format: 'pdf' },
   demo: {},
   stack: [],
   route: 'launch',
@@ -136,6 +137,9 @@ const PARENT = {
 function show(route) {
   S.route = route;
   pages.forEach((p) => p.classList.toggle('on', p.dataset.page === route));
+  closeSheet();
+  const pad = document.querySelector('.page.on .pad');
+  if (pad) pad.scrollTop = 0;
   if (route === 'room') renderRoom();
   if (route === 'album') renderAlbum();
   if (route === 'album-hidden') renderHidden();
@@ -425,7 +429,7 @@ function renderDay() {
   for (let i = 1; i <= Math.min(day.photos || 0, 9); i += 1) photos.push(`<i class="ph p${(i % 6) + 1}"></i>`);
   const moments = [];
   if (day.moments && day.moments.them) moments.push(`<div class="m-row"><b>${esc(S.partner)}：</b>${esc(day.moments.them)}</div>`);
-  if (day.moments && day.moments.me) moments.push(`<div class="m-row mine"><b>${esc(S.user.name)}：</b>${esc(day.moments.me)}</div>`);
+  if (day.moments && day.moments.me) moments.push(`<div class="m-row mine"><b>${esc(S.user.name)}：</b>${esc(day.moments.me)}<span class="m-tools"><button class="link" data-act="moment-add">改</button><button class="link" data-act="moment-del">删</button></span></div>`);
   const markList = (day.marks || []).filter((k) => k && !(k.deletedBy || []).includes('me'));
   const marks = markList
     .map((k) => {
@@ -487,6 +491,15 @@ function renderMe() {
 function renderSettings() {
   const done = document.getElementById('exportDone');
   if (done) done.hidden = !S.demo.exported;
+
+  const exportPage = screenEl.querySelector('.page[data-page="export"]');
+  if (exportPage) {
+    exportPage.querySelectorAll('[data-act="range"]').forEach((c) => c.classList.toggle('on', c.dataset.v === S.exportPrefs.range));
+    exportPage.querySelectorAll('[data-act="format"]').forEach((r) => {
+      const dot = r.querySelector('.radio');
+      if (dot) dot.classList.toggle('on', r.dataset.v === S.exportPrefs.format);
+    });
+  }
   screenEl.querySelectorAll('.toggle').forEach((t) => {
     const row = t.closest('.row');
     if (!row) return;
@@ -753,7 +766,48 @@ document.addEventListener('click', (e) => {
       toast('用门口那张卡片开了门');
       return renderRoom();
     }
+    if (a === 'range') { S.exportPrefs.range = act.dataset.v; renderSettings(); return; }
+    if (a === 'format') { S.exportPrefs.format = act.dataset.v; renderSettings(); return; }
     if (a === 'share') { toast('邀请链接已复制'); return; }
+    if (a === 'reopen-link') { toast('这个链接里没带房间 ID，重新打开一次邀请链接'); return; }
+    if (a === 'download') { toast('这里会跳到应用商店'); return; }
+    if (a === 'open-app') { go('invite'); return; }
+    if (a === 'image') {
+      if (S.door === 'closed') return;
+      const m = mk('me', 'image', '', now(), { place: '相册', status: 'sending' });
+      pushMessage(m);
+      setTimeout(() => { m.status = 'sent'; renderRoom(); }, 700);
+      return;
+    }
+    if (a === 'record') {
+      S.demo.recording = !S.demo.recording;
+      renderRoom();
+      toast(S.demo.recording ? '按住说话，上滑取消' : '取消录音');
+      return;
+    }
+    if (a === 'submit') {
+      const vals = [...document.querySelectorAll('.page.on input.field')].map((f) => (f.value || '').trim());
+      if (S.route === 'change-password') {
+        if ((vals[1] || '').length < 8) { toast('新密码至少 8 位'); return; }
+        toast('改好了，其他设备会掉线');
+        back();
+        return;
+      }
+      if (S.route === 'phone-change') {
+        if (vals[0] && vals[1] && vals[0] !== vals[1]) { toast('两次输入的新手机号不一样'); return; }
+        if (!vals[0]) { toast('新手机号还没填'); return; }
+        toast('换好了，旧号可以再注册');
+        back();
+        return;
+      }
+      toast('提交了');
+      return;
+    }
+    if (a === 'delete-account') {
+      toast('已提交注销，7 天内登录可撤销');
+      back();
+      return;
+    }
     if (a === 'notify-yes') { S.notify.msg = true; closeSheet(); toast('有人说话时，通知你。别的不会推。'); return; }
     if (a === 'mark-del') {
       const day = S.days[S.openDay];
@@ -773,7 +827,20 @@ document.addEventListener('click', (e) => {
     }
     if (a === 'moment-add') {
       const box = screenEl.querySelector('.moment-edit');
-      if (box) { box.hidden = false; box.querySelector('input').focus(); }
+      const cur = (S.days[S.openDay] && S.days[S.openDay].moments && S.days[S.openDay].moments.me) || '';
+      if (box) {
+        box.hidden = false;
+        const inp = box.querySelector('input');
+        inp.value = cur;
+        inp.focus();
+      }
+      return;
+    }
+    if (a === 'moment-del') {
+      const day = S.days[S.openDay];
+      if (day && day.moments) day.moments.me = '';
+      renderDay();
+      toast('删了');
       return;
     }
     if (a === 'moment-save') {
@@ -835,8 +902,26 @@ document.addEventListener('click', (e) => {
     }
     if (a === 'code-done') { toast('开房码已设置'); back(); return; }
     if (a === 'enter-room') { S.alone = false; go('room', { replace: true }); return; }
-    if (a === 'login') { S.signedIn = true; S.alone = false; go('room', { replace: true }); return; }
-    if (a === 'register') { S.signedIn = true; S.alone = true; S.demo.empty = 'solo'; go('room', { replace: true }); return; }
+    if (a === 'login') {
+      const v = [...document.querySelectorAll('.page.on input.field')].map((f) => (f.value || '').trim());
+      if (!v[0]) { toast('手机号还没填'); return; }
+      if (!v[1]) { toast('密码还没填'); return; }
+      S.signedIn = true;
+      S.alone = false;
+      go('room', { replace: true });
+      return;
+    }
+    if (a === 'register') {
+      const v = [...document.querySelectorAll('.page.on input.field')].map((f) => (f.value || '').trim());
+      if (v.some((x) => !x)) { toast('还有没填的'); return; }
+      if (v[2] && v[2].length < 8) { toast('密码至少 8 位'); return; }
+      if (v[2] && v[3] && v[2] !== v[3]) { toast('两次密码不一样'); return; }
+      S.signedIn = true;
+      S.alone = true;
+      S.demo.empty = 'solo';
+      go('room', { replace: true });
+      return;
+    }
     if (a === 'logout') {
       S.signedIn = false;
       S.stack = [];
