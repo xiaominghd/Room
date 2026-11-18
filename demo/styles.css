@@ -1,4 +1,4 @@
-﻿/* 房间 · 网页 demo
+/* 房间 · 网页 demo
    配色取自 room-app-wireframe.kui.fig 的画板渲染：
    米白底 #FBF8F3 / 暖黑 #2E2921 / 铁锈 #B0522F / 米色描边 #E6DED1 */
 
@@ -139,9 +139,15 @@ html, body {
 .link:hover { color: var(--ink); }
 .links { display: flex; justify-content: space-between; margin-top: 16px; }
 .foot-links {
-  display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: center;
   margin-top: 26px; font-size: 11.5px; color: var(--ink3);
+  line-height: 1.6;
 }
+.foot-links > * + *::before {
+  content: "·"; margin: 0 7px; color: #CFC5B5;
+}
+.foot-links .link { font-size: 11.5px; }
 
 /* ---------- 启动 / H5 ---------- */
 .launch {
