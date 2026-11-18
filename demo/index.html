@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>房间 · 网页 demo</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-door" viewBox="0 0 20 20">
+    <path d="M4.5 17V5.6c0-1.2.9-2.1 2.1-2.1h6.8c1.2 0 2.1.9 2.1 2.1V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="12.6" cy="10" r="1" fill="currentColor"/>
+    <path d="M3 17h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-me" viewBox="0 0 20 20">
+    <circle cx="10" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M4.2 16.4c.9-2.6 3.1-3.9 5.8-3.9s4.9 1.3 5.8 3.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-album" viewBox="0 0 20 20">
+    <rect x="3.4" y="4.4" width="5.4" height="5.4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <rect x="11.2" y="4.4" width="5.4" height="5.4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <rect x="3.4" y="11.2" width="5.4" height="5.4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+    <rect x="11.2" y="11.2" width="5.4" height="5.4" rx="1.4" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="i-back" viewBox="0 0 20 20">
+    <path d="M12.4 4.6 7 10l5.4 5.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-image" viewBox="0 0 20 20">
+    <rect x="2.8" y="4.2" width="14.4" height="11.6" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <circle cx="7" cy="8" r="1.2" fill="currentColor"/>
+    <path d="M4 13.8 8 10.4l2.8 2.2 2.2-1.8 2.4 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-mic" viewBox="0 0 20 20">
+    <rect x="7.6" y="3.2" width="4.8" height="8.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M4.8 9.6a5.2 5.2 0 0 0 10.4 0M10 14.8V17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-send" viewBox="0 0 20 20">
+    <path d="M10 16.4V4.4M5.2 9 10 4.2 14.8 9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-play" viewBox="0 0 20 20">
+    <path d="M7.4 4.6 14 10l-6.6 5.4z" fill="currentColor"/>
+  </symbol>
+  <symbol id="i-chev" viewBox="0 0 20 20">
+    <path d="M8 5 13 10l-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<div class="stage">
+
+  <aside class="review">
+    <h1>房间 · 网页 demo</h1>
+    <p class="sub">402 × 874 · 按 <code>room-app-wireframe.kui.fig</code> 还原<br>点左边切屏；房间的 20 个状态都在「房间」组里</p>
+    <div class="nav" id="nav"></div>
+    <div class="hint">双击 <code>index.html</code> 就能打开。左边是跳转，也可以直接一路点下去。</div>
+
+    <div class="dev">
+      <div class="dev-title">调试</div>
+      <div class="dev-now">现在：<b id="devNow">10 月 17 日 21:15</b></div>
+      <div class="dev-row">
+        <button data-act="t7">+7 天</button>
+        <button data-act="t28">+28 天</button>
+        <button data-act="treset">重置</button>
+      </div>
+      <div class="dev-row"><button data-act="their-door">让对方关门 / 开门</button></div>
+      <div class="dev-row">
+        <button data-act="incoming">对方发一条</button>
+        <button data-act="fail">下一条发失败</button>
+      </div>
+      <div class="dev-row"><button data-act="partner-card">对方递一张卡到门口</button></div>
+    </div>
+  </aside>
+
+  <main class="phone-wrap">
+    <div class="device">
+      <div class="screen" id="screen">
+
+        <!-- 启动 -->
+        <section class="page" data-page="launch">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <div class="launch">
+            <div class="logo"><svg class="ic"><use href="#i-door"/></svg></div>
+            <div class="wordmark">房间</div>
+            <div class="slogan">两个人，一间房</div>
+            <div class="launch-status">正在检查</div>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 登录 -->
+        <section class="page" data-page="login">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <div class="pad">
+            <h2 class="title">登录</h2>
+            <div class="field"><span class="ph">手机号</span></div>
+            <div class="field"><span class="ph">密码</span></div>
+            <button class="btn primary" data-act="login">登录</button>
+            <div class="links"><button class="link" data-goto="register">没有账号，注册</button><button class="link" data-goto="forgot-password">忘记密码</button></div>
+            <p class="note">一台设备登录；新登录会让旧设备退出</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 注册 -->
+        <section class="page" data-page="register">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <div class="pad">
+            <h2 class="title">注册</h2>
+            <div class="field"><span class="ph">手机号</span></div>
+            <div class="field"><span class="ph">用户名</span></div>
+            <div class="field"><span class="ph">密码（至少 8 位）</span></div>
+            <div class="field"><span class="ph">再次输入密码</span></div>
+            <label class="agree"><i class="cb"></i><span>我已阅读并同意 <b>用户协议</b> 和 <b>隐私政策</b></span></label>
+            <button class="btn primary" data-act="register">注册</button>
+            <p class="center"><button class="link" data-goto="login">已有账号，去登录</button></p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 开房码 -->
+        <section class="page" data-page="invite">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <div class="pad">
+            <h2 class="title">房间 R7K2M9</h2>
+            <p class="sub2">阿澄 给你留的房间</p>
+            <div class="code-row"><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell on"></i><i class="cell"></i><i class="cell"></i></div>
+            <button class="btn primary" data-act="enter-room">进入</button>
+            <p class="center"><button class="link">码没带过来？重新打开链接</button></p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 邀请落地 H5 -->
+        <section class="page" data-page="invite-h5">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <div class="launch">
+            <div class="logo"><svg class="ic"><use href="#i-door"/></svg></div>
+            <h2 class="h5-title">有人给你留了一个房间</h2>
+            <p class="sub2">这个房间只住两个人</p>
+            <button class="btn primary wide">去下载</button>
+            <button class="btn ghost wide">已装，打开</button>
+            <p class="note center">一间房只有两个位置</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 房间 -->
+        <section class="page room" data-page="room" data-state="open">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+
+          <header class="topbar">
+            <button class="icon-btn" data-goto="me" aria-label="我的"><svg class="ic"><use href="#i-me"/></svg></button>
+            <h1 class="room-title">我们的房间</h1>
+            <button class="icon-btn" data-goto="album" aria-label="相册"><svg class="ic"><use href="#i-album"/></svg></button>
+          </header>
+
+          <div class="strip" data-when="theirs-closed">
+            <div class="strip-t">对方关着门</div>
+            <div class="strip-q">今晚想自己待一会儿，明早再聊</div>
+            <div class="strip-h">你的消息会在对方开门时出现</div>
+          </div>
+
+          <div class="feed" id="feed"></div>
+
+          <div class="dim" id="dim"></div>
+
+          <div class="newmsg" data-when="newmsg">新消息</div>
+
+          <div class="quote-bar" data-when="quoted">
+            <div class="quote-tx">晚上吃什么？我回来路上可以带点菜</div>
+            <button class="quote-x" data-act="unquote" aria-label="取消引用">×</button>
+          </div>
+
+          <div class="ai-chip" data-when="opened">
+            <span class="ai-tag">AI</span><span>这一天快结束了，有什么想跟 TA 说的？</span>
+          </div>
+
+          <div class="composer composer-main" data-when="open">
+            <div class="handle" data-act="half" title="上拉关门"></div>
+            <div class="composer-row">
+              <button class="icon-btn sm"><svg class="ic"><use href="#i-image"/></svg></button>
+              <input class="input" id="roomInput" placeholder="说点什么" autocomplete="off" />
+              <button class="icon-btn sm"><svg class="ic"><use href="#i-mic"/></svg></button>
+              <button class="send" data-act="send"><svg class="ic"><use href="#i-send"/></svg></button>
+            </div>
+          </div>
+
+          <div class="composer card-composer" data-when="opened">
+            <div class="card-input" id="cardInput" contenteditable="true" spellcheck="false">今天谢谢你听我吐槽，晚安</div>
+            <button class="send-text" data-act="deliver">递出去</button>
+          </div>
+
+          <div class="composer closed-composer" data-when="closed">
+            <div class="closed-line" data-act="open-door">说一句，门就开</div>
+          </div>
+
+          <div class="half-layer" data-when="half">
+            <div class="half-sheet">
+              <div class="half-line">今晚到这儿</div>
+              <div class="half-btns">
+                <button class="btn ghost" data-act="cancel-half">算了</button>
+                <button class="btn dark" data-act="close-door">关</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="closed-layer" data-when="closed">
+            <div class="closed-quote">今晚想自己待一会儿，明早再聊</div>
+            <div class="door-card-line" data-when="door-card" data-act="use-card">门口有一张卡片</div>
+          </div>
+
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 相册 -->
+        <section class="page" data-page="album">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">相册</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="album-head"><button class="month-nav" data-act="prev-month">‹</button><div class="month">2025 年 10 月</div><button class="month-nav" data-act="next-month">›</button></div>
+          <div class="week"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="grid" id="grid"></div>
+          <button class="row-link" data-goto="album-hidden">隐藏的一天</button>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 隐藏的一天 -->
+        <section class="page" data-page="album-hidden">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">隐藏的一天</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <p class="note">隐藏的天不在相册里出现，内容还在</p>
+            <div class="card-list" id="hiddenList"></div>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 一天的卡 -->
+        <section class="page" data-page="day-card">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">10 月 17 日</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad day" id="dayBody"></div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 那天的原文 -->
+        <section class="page" data-page="day-originals">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">10 月 17 日</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="feed">
+            <div class="m left"><div class="bubble">晚上吃什么？我回来路上可以带点菜</div><div class="meta">20:48</div></div>
+            <div class="m right"><div class="bubble">都行，冰箱里有昨天的排骨</div><div class="meta">20:52</div></div>
+            <div class="m left"><div class="bubble voice"><svg class="ic"><use href="#i-play"/></svg><span>0:12</span></div><div class="meta">20:55</div></div>
+            <div class="m left"><div class="bubble">周末去试试新开的店吧，听说要提前订位</div><div class="meta">21:02</div></div>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 我的 -->
+        <section class="page" data-page="me">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">我的</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <button class="profile-card" data-goto="profile">
+              <div><b id="meName">小满</b><span id="mePartner">和 阿澄 在同一个房间</span></div>
+              <svg class="ic chev"><use href="#i-chev"/></svg>
+            </button>
+            <div class="group-label">账号</div>
+            <div class="card-list">
+              <button class="row" data-goto="account-security"><span>账号与安全</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-goto="notifications"><span>通知</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+            <div class="group-label">房间</div>
+            <div class="card-list">
+              <button class="row" data-goto="export"><span>导出</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-goto="how-it-works"><span>这个房间怎么运转</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-overlay="leave-room"><span>离开房间</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+            <div class="foot-links">
+              <button class="link" data-goto="privacy">隐私政策</button>
+              <button class="link" data-goto="terms">用户协议</button>
+              <span>v1.0.0</span>
+              <button class="link" data-goto="feedback">反馈</button>
+            </div>
+            <p class="note center">话会收起来，照片可以留下</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 个人资料 -->
+        <section class="page" data-page="profile">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">个人资料</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="card-list">
+              <button class="row" data-overlay="rename"><span>用户名</span><span class="val" id="profileName">小满</span></button>
+              <div class="row"><span>手机号</span><span class="val">138****8000</span></div>
+              <div class="row"><span>房间</span><span class="val">阿澄 · R7K2M9</span></div>
+              <div class="row"><span>加入时间</span><span class="val">2025 年 9 月 12 日</span></div>
+            </div>
+            <p class="note">名字只在这个房间里显示</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 账号与安全 -->
+        <section class="page" data-page="account-security">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">账号与安全</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="card-list">
+              <div class="row"><span>手机号</span><span class="val">138****8000</span></div>
+              <button class="row" data-goto="change-password"><span>修改密码</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-goto="phone-change"><span>换手机号</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+              <button class="row" data-overlay="logout-confirm"><span>退出登录</span><svg class="ic chev"><use href="#i-chev"/></svg></button>
+            </div>
+            <p class="note">退出登录不等于离开房间</p>
+            <button class="row danger" data-goto="account-delete"><span>注销账号</span></button>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 找回密码 -->
+        <section class="page" data-page="forgot-password">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">找回密码</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <p class="note">没有自助找回：用注册手机号发短信到这个号码</p>
+            <div class="steps">
+              <div class="step"><i>1</i><span>用注册手机号发短信到下面的号码</span></div>
+              <div class="step"><i>2</i><span>人工核对</span></div>
+              <div class="step"><i>3</i><span>你会收到一个临时密码</span></div>
+            </div>
+            <div class="phone-big mono">138 0013 8000</div>
+            <p class="note">内容写「找回密码」</p>
+            <p class="note">8 位，24 小时有效，用一次，登录后要改密码</p>
+            <p class="note">不是这个号码发来的，不处理</p>
+            <p class="note">不是实时，通常 24 小时内</p>
+            <button class="btn ghost" data-goto="login">回登录</button>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 修改密码 / 换手机号 / 注销 -->
+        <section class="page" data-page="change-password">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">修改密码</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="field"><span class="ph">当前密码</span></div>
+            <div class="field"><span class="ph">新密码（至少 8 位）</span></div>
+            <p class="note">改完其他设备会掉线，这台保持</p>
+            <button class="btn primary">提交</button>
+            <p class="center"><button class="link" data-goto="forgot-password">忘记当前密码</button></p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <section class="page" data-page="phone-change">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">换手机号</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="field"><span class="ph">新手机号</span></div>
+            <div class="field"><span class="ph">再次输入新手机号</span></div>
+            <div class="field"><span class="ph">密码</span></div>
+            <p class="note">没有短信验证，无法验证新号归属</p>
+            <p class="note">换号后，旧号可以再注册</p>
+            <button class="btn primary">提交</button>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <section class="page" data-page="account-delete">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">注销账号</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="steps">
+              <div class="step"><i>1</i><span>7 天内登录可以撤销</span></div>
+              <div class="step"><i>2</i><span>共同相册会变成只读，留给你对方</span></div>
+              <div class="step"><i>3</i><span>期间登录即撤销</span></div>
+            </div>
+            <div class="field"><span class="ph">密码</span></div>
+            <div class="field"><span class="ph">输入「注销」确认</span></div>
+            <button class="btn rust">注销</button>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 通知 -->
+        <section class="page" data-page="notifications">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">通知</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <p class="note">只推新消息和一张卡片</p>
+            <div class="card-list">
+              <div class="row"><span>新消息通知</span><i class="toggle on" data-toggle></i></div>
+              <div class="row"><span>锁屏显示内容</span><i class="toggle" data-toggle></i></div>
+            </div>
+            <p class="note">打开后，锁屏上会看到消息内容；不做图标角标</p>
+            <div class="card-list"><div class="row"><span>今晚不提醒</span><i class="toggle" data-toggle></i></div></div>
+            <p class="note">到明天 8:00，只是不响，消息照常进</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 导出 -->
+        <section class="page" data-page="export">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">导出</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="group-label">范围</div>
+            <div class="chips"><i class="chip on">全部</i><i class="chip">近 30 天</i><i class="chip">近 7 天</i></div>
+            <div class="card-list">
+              <div class="row col"><div><b>PDF 纪念册</b><span>排成一本册子，适合存下来慢慢看</span></div><i class="radio on"></i></div>
+              <div class="row col"><div><b>纯文本</b><span>只有文字内容，文件最小</span></div><i class="radio"></i></div>
+            </div>
+            <p class="note">导出时，对方会收到一条提示</p>
+            <p class="note ok" id="exportDone" hidden>已生成，对方已收到提示</p>
+            <button class="btn primary" data-act="export">生成导出文件</button>
+            <p class="note">导出的是你的副本，照片原图一并打包；链接 7 天后失效</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 运转说明 -->
+        <section class="page" data-page="how-it-works">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">这个房间怎么运转</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad how">
+            <h3>记忆</h3>
+            <p>一周后，一天会收成一张图文卡，四周后定型。</p>
+            <p>没照片的日子只剩一个点，留过的日子保留照片原图。</p>
+            <h3>AI</h3>
+            <p>每 7 天读一次原文用于压缩；开门时会读关门期间的上下文。</p>
+            <p>不留存，不用于训练。</p>
+            <h3>停</h3>
+            <p>关门是真的收不到消息。</p>
+            <p>想再开门，要先写一张卡片递出去。</p>
+            <h3>想聊</h3>
+            <p>只在开门的时候出现。</p>
+            <p>AI 问一句，没有复述。</p>
+            <h3>怎么关掉</h3>
+            <p class="muted">还没定</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 隐私 / 协议 / 反馈 -->
+        <section class="page" data-page="privacy">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">隐私政策</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad doc">
+            <p>手机号是唯一编号，密码只存哈希，不存证件与真名。</p>
+            <p>消息原文留 28 天，到期从服务器删除；留过的照片与卡永久保留。</p>
+            <p>AI 每 7 天读一次原文用于压缩，开门时读关门期间的上下文；不留存、不用于训练。</p>
+            <p>忘记密码只能人工重置：用注册手机号发短信给运营者。</p>
+            <p>日志不记消息内容、不记手机号、不记密码。</p>
+            <p class="muted">版本 1.0　生效日期 2025-09-01</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <section class="page" data-page="terms">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">用户协议</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad doc">
+            <p>这个房间只有两个人。开房码由房主保管，满两个人后失效。</p>
+            <p>房间里的内容属于你们两个人；相册是共同的，任何一方都不能单方删除。</p>
+            <p>不要用这个房间做违法的事。</p>
+            <p class="muted">版本 1.0　生效日期 2025-09-01</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <section class="page" data-page="feedback">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">反馈</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <p class="note">不提供在线客服与工单</p>
+            <div class="card-list">
+              <div class="row"><span>邮箱</span><span class="val">hi@room.example</span></div>
+              <div class="row"><span>运营者手机号</span><span class="val">138 0013 8000</span></div>
+            </div>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 设置开房码 / 邀请 -->
+        <section class="page" data-page="room-code-setup">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">设置开房码</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <p class="note">只有知道码的人能进这个房间；满两个人之后码立刻失效；随时可以改，旧码立刻作废。</p>
+            <div class="code-row"><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i><i class="cell"></i></div>
+            <p class="note">别用 123456、生日、手机尾号</p>
+            <button class="btn primary" data-act="code-done">确认</button>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <section class="page" data-page="invite-share">
+          <div class="statusbar"><span>9:41</span><span class="sb-right"><i class="sb-sig"></i><i class="sb-batt"></i></span></div>
+          <header class="topbar">
+            <button class="icon-btn" data-back><svg class="ic"><use href="#i-back"/></svg></button>
+            <h1 class="page-title">邀请</h1>
+            <span class="icon-btn ghostd"></span>
+          </header>
+          <div class="pad">
+            <div class="card-list">
+              <div class="row"><span>房间 ID</span><span class="val mono">R7K2M9</span></div>
+              <div class="row"><span>开房码</span><span class="val mono big">419305</span></div>
+              <div class="row"><span>邀请链接</span><span class="val mono">/i/r7k2m9</span></div>
+            </div>
+            <button class="btn primary" data-act="share">分享</button>
+            <button class="btn ghost" data-goto="room-code-setup">改开房码</button>
+            <p class="note">满两个人后，这个链接和码一起失效</p>
+          </div>
+          <div class="homebar"></div>
+        </section>
+
+        <!-- 弹层 -->
+        <div class="scrim" id="scrim"></div>
+
+        <div class="sheet" data-overlay="leave-room">
+          <div class="sheet-card narrow">
+            <p class="sheet-tx">离开房间还没定</p>
+            <div class="btn-row"><button class="btn ghost" data-close>返回</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="keep-day">
+          <div class="sheet-card">
+            <h3>留这一天</h3>
+            <ol class="keep-lines">
+              <li>留下就是永久</li>
+              <li>相册是你们两个人共同的内容</li>
+              <li>之后只能从我这边隐藏，不能单方删除</li>
+            </ol>
+            <div class="btn-row"><button class="btn ghost" data-close>再想想</button><button class="btn rust" data-act="keep-confirm">留</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="hide-day">
+          <div class="sheet-card narrow">
+            <p class="sheet-tx">只在我的相册里不显示，对方照常可见</p>
+            <div class="btn-row"><button class="btn ghost" data-close>取消</button><button class="btn dark" data-act="hide-confirm">隐藏</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="delete-mark">
+          <div class="sheet-card narrow">
+            <p class="sheet-tx">删了只在我这边少一条，对方仍看到</p>
+            <p class="note">这一天已经定型，删了就真没了</p>
+            <div class="btn-row"><button class="btn ghost" data-close>取消</button><button class="btn rust" data-act="mark-confirm">删除</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="rename">
+          <div class="sheet-card narrow">
+            <h3 class="left">改名</h3>
+            <div class="field" id="renameField">小满</div>
+            <div class="btn-row"><button class="btn ghost" data-close>取消</button><button class="btn dark" data-act="rename-save">保存</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="logout-confirm">
+          <div class="sheet-card narrow">
+            <p class="sheet-tx">退出后，重新登录会回到这间房</p>
+            <div class="btn-row"><button class="btn ghost" data-close>取消</button><button class="btn dark" data-act="logout">退出</button></div>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="notify-ask">
+          <div class="sheet-card narrow">
+            <p class="sheet-tx">有人说话时，通知你。<br>别的不会推。</p>
+            <div class="btn-row"><button class="btn ghost" data-close>先不用</button><button class="btn dark" data-act="notify-yes">允许</button></div>
+            <p class="note center">拒绝后不会再问</p>
+          </div>
+        </div>
+
+        <div class="sheet" data-overlay="actions">
+          <div class="sheet-card narrow menu">
+            <button class="menu-row" data-act="quote">引用并回复</button>
+            <button class="menu-row" data-act="mark">特别记忆</button>
+            <button class="menu-row cancel" data-close>取消</button>
+          </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

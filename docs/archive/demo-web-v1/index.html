@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>房间 · 本地 Demo</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+    <header class="topbar">
+      <div class="room-head">
+        <div class="room-name"><span class="logo" aria-hidden="true"><svg class="logo-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><rect x="10" y="12.5" width="4" height="4" rx="1.2" fill="#b0683f" stroke="none"/></svg></span>我们的房间</div>
+        <div class="room-sub">话七天后消失</div>
+      </div>
+      <div class="who">
+        <button class="pill active" data-user="A">你</button>
+        <button class="pill" data-user="B">TA</button>
+        <button class="me" id="meBtn" aria-label="我的">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 20v-6.6a5.5 5.5 0 0 1 11 0V20"/><circle cx="12" cy="13.2" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="navbar">
+      <nav class="tabs">
+        <button class="tab active" data-tab="room"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 9.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9.5"/><path d="M10 20v-4h4v4"/></svg>房间</button>
+        <button class="tab" data-tab="album"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.3"/><path d="m5.5 16.5 4-4 3 3 2.5-2.5 3.5 3.5"/></svg>相册</button>
+      </nav>
+      <div class="clockbar">
+        <span id="clockLabel">现在</span>
+        <div class="clock-actions">
+          <button class="mini" id="timeBtn">时间旅行</button>
+          <button class="mini" id="resetBtn">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <main class="view" id="roomView">
+      <div class="talk-dot hidden" id="talkDot"></div>
+      <div class="stop-banner hidden" id="stopBanner"></div>
+      <div class="stream" id="stream"></div>
+    </main>
+
+    <main class="view hidden" id="albumView">
+      <div class="album" id="album"></div>
+    </main>
+
+    <div class="composer" id="composer">
+      <div class="composer-top">
+        <div class="mode">
+          <button class="mode-btn active" data-mode="to"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H9.5L6 19v-3H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>给对方</button>
+          <button class="mode-btn" data-mode="self"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.2-4.5-9.2-8.6A3.6 3.6 0 0 1 12 7.2a3.6 3.6 0 0 1 9.2 4.2C19.2 15.5 12 20 12 20z"/></svg>给自己</button>
+        </div>
+        <button class="link" id="drawerBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="2.5"/><path d="M4 11.5h16"/><path d="M10 11.5v2.2a2 2 0 0 0 4 0v-2.2"/></svg>抽屉</button>
+      </div>
+      <div class="inputrow">
+        <textarea id="input" rows="1" placeholder="说点什么…"></textarea>
+        <button class="send" id="sendBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12 15-7-6.6 15-2.4-6-6-2z"/><path d="m10.5 14 6.5-6.5"/></svg>发送</button>
+      </div>
+      <div class="actions">
+        <button class="action" id="stopBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>停</button>
+        <button class="action" id="talkBtn"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5h11a1 1 0 0 1 1 1v6.5a1 1 0 0 1-1 1H8l-3 2.4V8.5a1 1 0 0 1 1-1z"/><path d="M16 9h3a1 1 0 0 1 1 1v5.5l-2-1.6"/></svg>想聊</button>
+        <span class="hint" id="actionHint"></span>
+      </div>
+    </div>
+
+    <div class="drawer hidden" id="drawer">
+      <div class="drawer-grip"></div>
+      <div class="drawer-head"><span>只给自己</span><button class="link" id="drawerClose">关</button></div>
+      <div class="notes" id="notes"></div>
+    </div>
+
+    <div class="modal hidden" id="timeModal">
+      <div class="modal-card">
+        <h3>时间旅行</h3>
+        <p>把它们往前拨，看看七天之后。</p>
+        <div class="modal-actions">
+          <button data-jump="1">+1 天</button>
+          <button data-jump="3">+3 天</button>
+          <button data-jump="7">+7 天</button>
+        </div>
+        <button class="link" id="timeClose">关</button>
+      </div>
+    </div>
+
+    <div class="photo-modal hidden" id="photoModal">
+      <div class="photo-card">
+        <div class="big" id="bigPhoto"></div>
+        <div class="foot" id="photoFoot"></div>
+        <button class="link" id="photoClose">关</button>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="screen"></div>
+    <div class="sheet-wrap hidden" id="leaveSheet"></div>
+
+    <div class="splash" id="splash">
+      <div class="splash-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 20v-6.6a5.5 5.5 0 0 1 11 0V20"/><circle cx="12" cy="13.2" r="1.5" fill="currentColor" stroke="none"/></svg>
+      </div>
+      <div class="splash-name">房间</div>
+      <p class="splash-tag">一个会忘的房间，一个不会忘的相册</p>
+      <span class="splash-dot"></span>
+    </div>
+
+    <div class="toast hidden" id="toast"></div>
+  </div>
+
+  <p class="footnote">切换「你 / TA」看两边 · 时间旅行 +7 天看消散 · 重置可重来</p>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
