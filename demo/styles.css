@@ -1,4 +1,4 @@
-﻿/* 房间 · 网页 demo
+/* 房间 · 网页 demo
    配色取自 room-app-wireframe.kui.fig 的画板渲染：
    米白底 #FBF8F3 / 暖黑 #2E2921 / 铁锈 #B0522F / 米色描边 #E6DED1 */
 
@@ -369,11 +369,12 @@ input.input::placeholder { color: var(--ink3); }
   height: 44px; padding: 0 18px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
 }
 
-.closed-composer { display: none; padding: 16px 18px 8px; position: relative; z-index: 12; }
+.closed-composer { display: none; padding: 16px 18px 8px; position: relative; z-index: 12; background: transparent; border-top: 0; }
 .closed-line {
   height: 52px; border-radius: 16px;
   background: rgba(251,248,243,.10);
-  border: 1px solid rgba(251,248,243,.16);
+  border: 1px solid rgba(251,248,243,.18);
+  box-shadow: 0 0 24px rgba(251,248,243,.12);
   color: rgba(251,248,243,.92);
   display: flex; align-items: center; justify-content: center;
   font-size: 14px; cursor: pointer;
@@ -405,6 +406,12 @@ input.input::placeholder { color: var(--ink3); }
   background: var(--dark);
   display: none; flex-direction: column; align-items: center; justify-content: center;
   gap: 14px; padding: 0 40px 130px;
+}
+.closed-handle {
+  position: absolute; top: 62px; left: 50%; transform: translateX(-50%);
+  width: 58px; height: 4px; border-radius: 3px;
+  background: rgba(251,248,243,.42);
+  box-shadow: 0 0 14px rgba(251,248,243,.45);
 }
 .closed-quote { font-size: 15px; line-height: 1.7; color: rgba(251,248,243,.94); text-align: center; }
 .door-card-line {
