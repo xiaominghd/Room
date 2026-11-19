@@ -1,4 +1,4 @@
-/* 用假 DOM 跑一遍 demo 的逻辑：页面切换、弹层、渲染、28 天记忆 */
+﻿/* 用假 DOM 跑一遍 demo 的逻辑：页面切换、弹层、渲染、28 天记忆 */
 const fs = require('fs');
 const vm = require('vm');
 
@@ -88,11 +88,12 @@ function tap(act, extra = {}, inSheet = null) {
   handlers.click({ target, preventDefault() {} });
 }
 
+const timers = [];
 const ctx = {
   document,
   window: { addEventListener() {} },
   location: { reload() {} },
-  setTimeout: () => 0,
+  setTimeout: (fn, ms) => { timers.push(ms); return timers.length; },
   clearTimeout: () => {},
   console,
 };
@@ -331,6 +332,7 @@ api.show('room');
 api.S.door = 'open'; api.S.justOpened = false; api.renderRoom();
 tap('half');
 check('半关', api.S.door === 'half');
+check('半关不再有 5 秒自动弹回', !timers.includes(5000));
 const halfIn = document.getElementById('halfLine');
 check('半关时那句被预填成「今晚到这儿」', halfIn.value === '今晚到这儿');
 halfIn.value = '   ';
@@ -340,6 +342,9 @@ halfIn.value = '别等我了，早点睡';
 tap('close-door');
 check('写了一句就能关', api.S.door === 'closed');
 check('关门那句存下来的是我写的', api.S.doorLine === '别等我了，早点睡');
+tap('half');
+tap('cancel-half');
+check('点「算了」回到开着', api.S.door === 'open');
 
 console.log(fails ? `\n${fails} 项失败` : '\n全部通过');
 process.exit(fails ? 1 : 0);

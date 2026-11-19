@@ -573,7 +573,6 @@ function hideDay() {
 
 /* ---------------- 门的半关（5 秒弹回） ---------------- */
 
-let halfTimer = null;
 function enterHalf() {
   S.door = 'half';
   const inp = document.getElementById('halfLine');
@@ -582,18 +581,9 @@ function enterHalf() {
     inp.focus();
   }
   renderRoom();
-  clearTimeout(halfTimer);
-  halfTimer = setTimeout(() => {
-    if (S.door === 'half') {
-      S.door = 'open';
-      renderRoom();
-      toast('5 秒没动，门自己弹回去了');
-    }
-  }, 5000);
 }
 function clearHalf() {
-  clearTimeout(halfTimer);
-  halfTimer = null;
+  /* 半关不再自动弹回：停在这里等人写完那句，点「关」或「算了」才走 */
 }
 
 /* ---------------- 开发件 ---------------- */
