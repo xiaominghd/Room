@@ -326,5 +326,20 @@ for (const p of PAGES) {
 check('每个页面的返回都落回一个页面', stackFails.length === 0);
 if (stackFails.length) console.log('     ', stackFails);
 
+// 半关的关门那句：可改、不能空
+api.show('room');
+api.S.door = 'open'; api.S.justOpened = false; api.renderRoom();
+tap('half');
+check('半关', api.S.door === 'half');
+const halfIn = document.getElementById('halfLine');
+check('半关时那句被预填成「今晚到这儿」', halfIn.value === '今晚到这儿');
+halfIn.value = '   ';
+tap('close-door');
+check('那句空着不让关', api.S.door === 'half');
+halfIn.value = '别等我了，早点睡';
+tap('close-door');
+check('写了一句就能关', api.S.door === 'closed');
+check('关门那句存下来的是我写的', api.S.doorLine === '别等我了，早点睡');
+
 console.log(fails ? `\n${fails} 项失败` : '\n全部通过');
 process.exit(fails ? 1 : 0);

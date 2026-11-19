@@ -1,4 +1,4 @@
-﻿/* 房间 · 网页 demo
+/* 房间 · 网页 demo
    按 PRD 把交互串起来：导航栈、门、消息、28 天记忆、相册、此刻、留一天、设置。
    所有状态都在内存里，刷新即重置。 */
 
@@ -15,6 +15,7 @@ const S = {
   partner: '阿澄',
   room: { id: 'R7K2M9', code: '419305' },
   door: 'open',          // open | half | closed
+  doorLine: '今晚到这儿',  // 关门那句（可改，不能空）
   theirDoor: 'open',     // open | closed
   doorCard: false,       // 门口有没有对方留的卡
   justOpened: false,     // 刚开门、卡片还没递出去
@@ -306,6 +307,10 @@ function renderRoom() {
   const dcl = roomEl.querySelector('.door-card-line');
   if (dcl) dcl.style.display = S.doorCard ? '' : 'none';
 
+  // 关门那句（用户自己写的）
+  const cq = roomEl.querySelector('.closed-quote');
+  if (cq) cq.textContent = S.doorLine || '今晚到这儿';
+
   // 输入框草稿
   if (inputEl && inputEl.value === '' && S.demo.limited) inputEl.value = '其实今天还有件事想跟你说';
 
@@ -571,6 +576,11 @@ function hideDay() {
 let halfTimer = null;
 function enterHalf() {
   S.door = 'half';
+  const inp = document.getElementById('halfLine');
+  if (inp) {
+    inp.value = S.doorLine || '今晚到这儿';
+    inp.focus();
+  }
   renderRoom();
   clearTimeout(halfTimer);
   halfTimer = setTimeout(() => {
@@ -646,7 +656,16 @@ document.addEventListener('click', (e) => {
     }
     if (a === 'half') { enterHalf(); return; }
     if (a === 'cancel-half') { clearHalf(); S.door = 'open'; return renderRoom(); }
-    if (a === 'close-door') { clearHalf(); S.door = 'closed'; S.justOpened = false; return renderRoom(); }
+    if (a === 'close-door') {
+      const inp = document.getElementById('halfLine');
+      const line = (inp && inp.value ? inp.value : '').trim();
+      if (!line) { toast('关门那句不能空'); return; }
+      S.doorLine = line;
+      clearHalf();
+      S.door = 'closed';
+      S.justOpened = false;
+      return renderRoom();
+    }
     if (a === 'open-door') { S.door = 'open'; S.justOpened = true; S.doorCard = false; return renderRoom(); }
     if (a === 'deliver') {
       const el = document.getElementById('cardInput');
@@ -999,6 +1018,24 @@ if (inputEl) {
   });
 }
 
+/* 半关的关门那句：回车等于按「关」 */
+const halfLineEl = document.getElementById('halfLine');
+if (halfLineEl) {
+  halfLineEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const inp = document.getElementById('halfLine');
+      const line = (inp && inp.value ? inp.value : '').trim();
+      if (!line) { toast('关门那句不能空'); return; }
+      S.doorLine = line;
+      clearHalf();
+      S.door = 'closed';
+      S.justOpened = false;
+      renderRoom();
+    }
+  });
+}
+
 /* 侧栏跳转 */
 const SCREENS = [
   { group: '准入', items: [['启动', 'launch'], ['登录', 'login'], ['注册', 'register'], ['开房码', 'invite'], ['邀请落地 H5', 'invite-h5'], ['找回密码', 'forgot-password']] },
@@ -1018,7 +1055,9 @@ function preset(opts = {}) {
   S.demo = {};
   S.alone = false;
   S.openDay = opts.openDay || '2025-10-16';
+  S.doorLine = '今晚到这儿';
   if (opts.door) S.door = opts.door;
+  if (opts.door === 'closed' || opts.doorCard) S.doorLine = '今晚想自己待一会儿，明早再聊';
   if (opts.theirDoor) S.theirDoor = opts.theirDoor;
   if (opts.justOpened) S.justOpened = true;
   if (opts.doorCard) S.doorCard = true;
