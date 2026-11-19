@@ -1,4 +1,4 @@
-﻿/* 房间 · 网页 demo
+/* 房间 · 网页 demo
    按 PRD 把交互串起来：导航栈、门、消息、28 天记忆、相册、此刻、留一天、设置。
    所有状态都在内存里，刷新即重置。 */
 
@@ -454,8 +454,7 @@ function renderDay() {
   if (day.kept) acts.push('<button class="link" data-goto="day-originals">看那天的原文</button>');
 
   body.innerHTML = `
-    ${day.kept ? '<div class="kept-bar"><b>留过</b><span>原图和原文都留下了，不能取消；不想看只能从我这边隐藏</span></div>' : ''}
-    <div class="ai-line">${hasCard ? '<span class="ai-tag">AI 整理</span>' : '<span class="muted small">还没到第 7 天，这一天还没收成卡</span>'}</div>
+    <div class="ai-line">${hasCard ? '<span class="ai-tag">AI 整理</span>' : '<span class="muted small">第 7 天才有卡</span>'}</div>
     ${hasCard ? `<p class="day-text">${esc(day.card || `那天有 ${dayOfMessages(key).length} 句原文，已经收进相册。`).replace(/\n/g, '<br>')}</p>` : ''}
     ${photos.length ? `<div class="photo-grid">${photos.join('')}</div>` : ''}
     <div class="moments">

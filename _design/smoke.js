@@ -1,4 +1,4 @@
-﻿/* 用假 DOM 跑一遍 demo 的逻辑：页面切换、弹层、渲染、28 天记忆 */
+/* 用假 DOM 跑一遍 demo 的逻辑：页面切换、弹层、渲染、28 天记忆 */
 const fs = require('fs');
 const vm = require('vm');
 
@@ -144,7 +144,7 @@ check('留过的卡有「此刻」', day.innerHTML.includes('此刻'));
 check('留过的卡有「看那天的原文」', day.innerHTML.includes('看那天的原文'));
 
 api.S.openDay = '2025-10-17'; api.renderDay();
-check('今天还没到第 7 天，不出卡', day.innerHTML.includes('还没到第 7 天'));
+check('今天还没到第 7 天，不出卡', day.innerHTML.includes('第 7 天才有卡'));
 
 // 走一遍「留这一天」的点击链路
 api.S.door = 'open'; api.S.justOpened = false;
@@ -156,7 +156,6 @@ tap('keep-confirm', {}, 'keep-day');
 check('点「留」之后弹层关掉', onSheets().length === 0);
 check('点「留」之后这一天被标成 kept', api.S.days['2025-10-09'].kept === true);
 check('点「留」之后卡里出现「留过」', day.innerHTML.includes('留过'));
-check('点「留」之后顶部出现留过状态条', day.innerHTML.includes('kept-bar'));
 check('点「留」之后卡里出现「看那天的原文」', day.innerHTML.includes('看那天的原文'));
 api.renderRoom();
 check('点「留」之后房间那一行变成留过', feed.innerHTML.includes('10 月 9 日 · 留过'));
@@ -242,7 +241,6 @@ check('点 × 能取消引用', api.S.quote === null);
 // 留一天不可取消；特别记忆本人可删（只影响自己）
 api.S.openDay = '2025-10-16';
 api.renderDay();
-check('留过的卡写明「不能取消」', day.innerHTML.includes('不能取消'));
 check('留过没有「取消留」入口', !day.innerHTML.includes('取消留'));
 check('我的特别记忆有「删」', day.innerHTML.includes('data-act="mark-del"'));
 check('对方标的特别记忆标了「阿澄 标的」且没有删', day.innerHTML.includes('阿澄 标的'));
