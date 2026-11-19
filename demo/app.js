@@ -1,4 +1,4 @@
-/* 房间 · 网页 demo
+﻿/* 房间 · 网页 demo
    按 PRD 把交互串起来：导航栈、门、消息、28 天记忆、相册、此刻、留一天、设置。
    所有状态都在内存里，刷新即重置。 */
 
@@ -577,7 +577,7 @@ function enterHalf() {
   S.door = 'half';
   const inp = document.getElementById('halfLine');
   if (inp) {
-    inp.value = S.doorLine || '今晚到这儿';
+    inp.value = '';
     inp.focus();
   }
   renderRoom();
@@ -664,7 +664,7 @@ document.addEventListener('click', (e) => {
       const card = mk('me', 'card', txt, now());
       S.messages.push(card);
       S.justOpened = false;
-      if (el) el.textContent = '';
+      if (el) el.innerHTML = '';
       const n = S.queue.length;
       if (n) { S.messages.push(...S.queue); S.queue = []; }
       toast(n ? `递出去了 · 对方排队的 ${n} 条话回来了` : '递出去了');
