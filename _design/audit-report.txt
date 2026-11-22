@@ -1,5 +1,7 @@
+                   -                act      t1                 +1 天
                    -                act      t7                 +7 天
-                   -                act      t28                +28 天
+                   -                act      t14                +14 天
+                   -                act      t21                +21 天
                    -                act      treset             重置
                    -                act      their-door         让对方关门 / 开门
                    -                act      incoming           对方发一条
@@ -29,17 +31,16 @@
                    album            back                        
                    album            act      prev-month         ‹
                    album            act      next-month         ›
-                   album            goto     album-hidden       隐藏的一天
-                   album-hidden     back                        
                    day-card         back                        
                    day-originals    back                        
                    me               back                        
-                   me               goto     profile            小满 和 阿澄 在同一个房间
+                   me               goto     profile            小满 和 阿澄 在「我们的房间」
                    me               goto     account-security   账号与安全
                    me               goto     notifications      通知
+                   me               goto     room-info          房间信息
                    me               goto     export             导出
                    me               goto     how-it-works       这个房间怎么运转
-                   me               overlay  leave-room         离开房间
+                   me               overlay  leave-room         离开
                    me               goto     privacy            隐私政策
                    me               goto     terms              用户协议
                    me               goto     feedback           反馈
@@ -65,38 +66,40 @@
                    export           act      range              全部
                    export           act      range              近 30 天
                    export           act      range              近 7 天
-                   export           act      format             PDF 纪念册 排成一本册子，适合存下来慢慢看
-                   export           act      format             纯文本 只有文字内容，文件最小
+                   export           act      format             PDF 纪念册
+                   export           act      format             纯文本
                    export           act      export             生成导出文件
                    how-it-works     back                        
                    privacy          back                        
                    terms            back                        
                    feedback         back                        
-                   room-code-setup  back                        
-                   room-code-setup  act      code-done          确认
-                   invite-share     back                        
-                   invite-share     act      share              分享
-                   invite-share     goto     room-code-setup    改开房码
-                   -                overlay  leave-room         离开房间还没定 返回
+                   room-info        back                        
+                   room-info        act      save-name          保存名字
+                   room-info        act      new-code           换一个码
+                   room-info        act      share              分享
+                   -                overlay  leave-room         离开 功能待开发 返回
                    -                close                       返回
-                   -                overlay  keep-day           留这一天 留下就是永久 相册是你们两个人共同的内容 
+                   -                overlay  keep-day           留这一天 再想想 留
                    -                close                       再想想
                    -                act      keep-confirm       留
-                   -                overlay  hide-day           只在我的相册里不显示，对方照常可见 取消 隐藏
+                   -                overlay  unkeep-day         取消留这一天 再想想 取消留
+                   -                act      unkeep-confirm     取消留
+                   -                overlay  delete-mark        删掉这句？ 只删你自己标的这条。 取消 删除
                    -                close                       取消
-                   -                act      hide-confirm       隐藏
-                   -                overlay  delete-mark        删了只在我这边少一条，对方仍看到 这一天已经定型，删
                    -                act      mark-confirm       删除
                    -                overlay  rename             改名 小满 取消 保存
                    -                act      rename-save        保存
-                   -                overlay  logout-confirm     退出后，重新登录会回到这间房 取消 退出
+                   -                overlay  logout-confirm     退出登录 重新登录会回到这间房。 取消 退出
                    -                act      logout             退出
-                   -                overlay  notify-ask         有人说话时，通知你。 别的不会推。 先不用 允许 拒
+                   -                overlay  notify-ask         开通知？ 有人说话时，告诉你。别的不会推。 先不用 
                    -                close                       先不用
                    -                act      notify-yes         允许
                    -                overlay  actions            引用并回复 特别记忆 取消
                    -                act      quote              引用并回复
                    -                act      mark               特别记忆
+                   -                overlay  image-viewer       留 ×
+                   -                act      viewer-act         留
+                   -                close                       ×
 
 --- 页面骨架 ---
 launch             back=0 homebar=1 内容区=1
@@ -106,7 +109,6 @@ invite             back=0 homebar=1 内容区=1
 invite-h5          back=0 homebar=1 内容区=1
 room               back=0 homebar=1 内容区=1
 album              back=1 homebar=1 内容区=0
-album-hidden       back=1 homebar=1 内容区=1
 day-card           back=1 homebar=1 内容区=1
 day-originals      back=1 homebar=1 内容区=1
 me                 back=1 homebar=1 内容区=1
@@ -122,8 +124,7 @@ how-it-works       back=1 homebar=1 内容区=1
 privacy            back=1 homebar=1 内容区=1
 terms              back=1 homebar=1 内容区=1
 feedback           back=1 homebar=1 内容区=1
-room-code-setup    back=1 homebar=1 内容区=1
-invite-share       back=1 homebar=1 内容区=1
+room-info          back=1 homebar=1 内容区=1
 
 --- 每页入口数（来自 data-goto / 侧栏）---
 launch             入口 1
@@ -131,10 +132,9 @@ login              入口 4
 register           入口 2
 invite             入口 1
 invite-h5          入口 1
-room               入口 20
+room               入口 19
 album              入口 2
-album-hidden       入口 2
-day-card           入口 4
+day-card           入口 3
 day-originals      入口 2
 me                 入口 3
 profile            入口 3
@@ -149,17 +149,17 @@ how-it-works       入口 2
 privacy            入口 2
 terms              入口 2
 feedback           入口 2
-room-code-setup    入口 2
-invite-share       入口 2
+room-info          入口 3
 
 --- 弹层触发 ---
 leave-room         静态触发 2
 keep-day           静态触发 1
-hide-day           静态触发 1
+unkeep-day         静态触发 1
 delete-mark        静态触发 1
 rename             静态触发 2
 logout-confirm     静态触发 2
 notify-ask         静态触发 1
 actions            静态触发 1
+image-viewer       静态触发 1
 
-pages=25 sheets=8
+pages=23 sheets=9

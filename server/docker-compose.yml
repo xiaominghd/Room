@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: room-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: room
+      POSTGRES_USER: room
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-room_dev_pw}
+      TZ: Asia/Shanghai
+      PGTZ: Asia/Shanghai
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - room_pgdata:/var/lib/postgresql/data
+      # 只在「空卷」时自动执行，顺序按文件名
+      - ./schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      - ./seed.sql:/docker-entrypoint-initdb.d/20-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U room -d room"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  room_pgdata:

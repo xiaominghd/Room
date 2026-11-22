@@ -1,4 +1,4 @@
-# 依赖与构建产物
+﻿# 依赖与构建产物
 node_modules/
 app/node_modules/
 app/dist-web/
@@ -25,6 +25,12 @@ demo.zip
 Thumbs.db
 desktop.ini
 
-# ��ͼ�����õ��������ʱĿ¼
+# ��ͼ�����õ��������ʱĿ¼
 _tmpprofile/
 _shot*.png
+
+# 后端本地环境
+server/.env
+
+# 本地密钥（不要提交）
+.ssh/
